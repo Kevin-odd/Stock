@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KL 個股分析 | 2026-05-22</title>
+<style>
+:root{--fs:13px;--bg:#080b10;--surface:#0d1118;--surface2:#121820;--border:#1c2330;--text:#b8c8d8;--dim:#405060;--accent:#00c8f0;--green:#00c896;--red:#ff3d5a;--yellow:#f0c040;--orange:#ff8040;--fb:-apple-system,BlinkMacSystemFont,'PingFang TC','Microsoft JhengHei','Noto Sans TC','Segoe UI',sans-serif;--fm:'SF Mono','Consolas','Monaco','Courier New',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--fm);font-size:var(--fs);line-height:1.65;user-select:none;-webkit-user-select:none;}
+.fc{position:fixed;top:14px;right:14px;z-index:999;display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px;}
+.fb{padding:4px 10px;font-size:11px;font-family:var(--fm);background:transparent;border:none;color:var(--dim);cursor:pointer;border-radius:3px;transition:all .15s;}
+.fb:hover{color:var(--text);background:var(--surface2);}.fb.on{color:var(--accent);background:rgba(0,200,240,.15);}
+.hdr{padding:26px 40px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%);flex-wrap:wrap;gap:12px;}
+.hdr-lbl{font-size:calc(var(--fs)*.77);letter-spacing:.3em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+.hdr-title{font-family:var(--fb);font-size:calc(var(--fs)*3);font-weight:900;color:var(--text);line-height:1;}
+.hdr-title span{color:var(--accent);}
+.hdr-r{text-align:right;}
+.hdr-meta{font-size:calc(var(--fs)*.85);color:var(--dim);margin-top:3px;}
+.wrap{max-width:1280px;margin:0 auto;padding:22px 40px 64px;}
+.sec-lbl{font-size:calc(var(--fs)*.77);letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+/* quadrant */
+.sec4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.sc{background:var(--surface);display:flex;flex-direction:column;}
+.sc-hdr{padding:9px 12px;font-size:calc(var(--fs)*.77);letter-spacing:.22em;text-transform:uppercase;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:filter .12s;}
+.sc-hdr:hover{filter:brightness(1.2);}
+.sc.s .sc-hdr{color:var(--green);background:rgba(0,200,150,.06);}
+.sc.w .sc-hdr{color:var(--yellow);background:rgba(240,192,64,.06);}
+.sc.tw .sc-hdr{color:var(--orange);background:rgba(255,140,64,.06);}
+.sc.x .sc-hdr{color:var(--red);background:rgba(255,61,90,.06);}
+/* breathing light */
+@keyframes bl-g{0%,100%{opacity:.18;text-shadow:none}50%{opacity:1;text-shadow:0 0 8px var(--green),0 0 16px var(--green)}}
+@keyframes bl-y{0%,100%{opacity:.18;text-shadow:none}50%{opacity:1;text-shadow:0 0 8px var(--yellow),0 0 16px var(--yellow)}}
+@keyframes bl-o{0%,100%{opacity:.18;text-shadow:none}50%{opacity:1;text-shadow:0 0 8px var(--orange),0 0 16px var(--orange)}}
+@keyframes bl-r{0%,100%{opacity:.18;text-shadow:none}50%{opacity:1;text-shadow:0 0 8px var(--red),0 0 16px var(--red)}}
+.bl{flex-shrink:0;font-size:10px;line-height:1;display:inline-block;}
+.sc.s .bl{color:var(--green);animation:bl-g 1.4s ease-in-out infinite;}
+.sc.w .bl{color:var(--yellow);animation:bl-y 1.6s ease-in-out infinite;}
+.sc.tw .bl{color:var(--orange);animation:bl-o 1.8s ease-in-out infinite;}
+.sc.x .bl{color:var(--red);animation:bl-r 1.2s ease-in-out infinite;}
+/* summary rows */
+.sc-item{padding:7px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.sc-item:last-child{border-bottom:none;}
+.sc-tk{font-size:calc(var(--fs)*.92);font-weight:600;color:var(--text);white-space:nowrap;flex-shrink:0;}
+.sc-rk{display:none;}
+.sc.s .sc-rk{color:var(--green);}.sc.w .sc-rk{color:var(--yellow);}
+.sc.tw .sc-rk{color:var(--orange);}.sc.x .sc-rk{color:var(--red);}
+/* detail panel */
+@keyframes sd{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.sc-det{display:none;grid-column:1/-1;border-top:2px solid var(--border);}
+.sc-det.open{display:block;animation:sd .18s ease;}
+.det-tbl{width:100%;border-collapse:collapse;}
+.det-tbl thead tr{background:rgba(255,255,255,.025);}
+.det-tbl th{padding:5px 10px;font-size:calc(var(--fs)*.72);letter-spacing:.15em;text-transform:uppercase;color:var(--dim);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+.det-tbl th.r{text-align:right;}
+.det-tbl td{padding:5px 10px;border-bottom:1px solid var(--border);font-size:calc(var(--fs)*.85);background:var(--surface2);}
+.det-tbl td.r{text-align:right;font-family:var(--fm);}
+.det-tbl tr:last-child td{border-bottom:none;}
+.cg{color:var(--green);}.cr{color:var(--red);}.cy{color:var(--yellow);}.cd{color:var(--dim);}.cw{color:var(--text);font-weight:600;}
+.det-note{padding:8px 10px;font-family:var(--fb);font-size:calc(var(--fs)*.82);color:var(--dim);border-top:1px solid var(--border);background:var(--surface2);line-height:1.65;}
+/* verdict */
+.rotation-verdict{background:rgba(255,130,64,.04);border:1px solid rgba(255,130,64,.18);border-left:3px solid var(--orange);padding:14px 20px;margin-top:10px;margin-bottom:30px;}
+.rv-title{font-size:calc(var(--fs)*.77);letter-spacing:.28em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.rv-txt{font-family:var(--fb);font-size:calc(var(--fs)*.92);color:var(--text);line-height:1.9;}
+.rv-txt strong{color:var(--orange);font-weight:700;}.rv-txt em{color:var(--yellow);font-style:normal;}
+.rv-sub{font-size:calc(var(--fs)*.72);letter-spacing:.28em;text-transform:uppercase;color:var(--dim);margin:12px 0 6px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+.rv-row{display:flex;gap:8px;align-items:baseline;padding:3px 0;font-size:calc(var(--fs)*.88);}
+.rv-row .lbl{color:var(--dim);white-space:nowrap;flex-shrink:0;min-width:200px;}
+.rv-row .val{color:var(--text);}
+/* cross-market */
+.emo-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--yellow);padding:16px 20px;margin-bottom:34px;}
+.emo-box-title{font-size:calc(var(--fs)*.77);letter-spacing:.3em;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;}
+.emo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);}
+.emo-cell{background:var(--surface2);padding:12px 14px;}
+.emo-cell-lbl{font-size:calc(var(--fs)*.72);letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.emo-cell-txt{font-family:var(--fb);font-size:calc(var(--fs)*.88);color:var(--text);line-height:1.8;}
+/* footer */
+.ftr{border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.ftr .disc{font-size:calc(var(--fs)*.77);color:var(--dim);}
+.ftr .brand{font-family:var(--fb);font-size:calc(var(--fs)*.92);font-weight:900;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;}
+body.light{--bg:#f2f5f9;--surface:#ffffff;--surface2:#e8eef5;--border:#ccd6e2;--text:#1a2535;--dim:#6080a0;--accent:#0070a0;--green:#006e4a;--red:#c00030;--yellow:#7a5500;--orange:#a03800;}
+</style>
+</head>
+<body>
+
+<div class="fc">
+  <button class="fb" id="fs-small" onclick="setFS('small')">小</button>
+  <button class="fb on" id="fs-normal" onclick="setFS('normal')">中</button>
+  <button class="fb" id="fs-large" onclick="setFS('large')">大</button>
+  <button class="fb" style="margin-left:4px;border-left:1px solid var(--border);padding-left:10px;" onclick="setTheme('dark')" id="btn-dark">深</button>
+  <button class="fb" onclick="setTheme('light')" id="btn-light">淺</button>
+</div>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-lbl">KL × Gemini</div>
+    <div class="hdr-title">KL <span>個股分析</span><span style="font-size:calc(var(--fs)*1.1);font-weight:400;color:var(--dim);letter-spacing:.05em;margin-left:16px;vertical-align:middle;">2026 / 05 / 22</span></div>
+  </div>
+  <div class="hdr-r">
+    <div class="hdr-meta">美股 AI 供應鏈 15 板塊｜台股 AI 供應鏈 8 板塊｜點擊卡片標題展開詳細數據</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══ 美股 ═══ -->
+<div class="sec-lbl" style="margin-bottom:10px;">美股個股板塊輪動｜AI 供應鏈（5/21 截面）</div>
+
+<div class="sec4">
+
+  <div class="sc s">
+    <div class="sc-hdr" onclick="tog('us-s')"><span>▲ 第一梯隊：動能持續確立</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">AI 資安 CRWD/PANW/FTNT</span><span class="sc-rk">Rank 77/77/81｜REL20 +34/+35/+44% 🔥</span></div>
+    <div class="sc-item"><span class="sc-tk">矽智財 ARM</span><span class="sc-rk">+16.16%｜REL5 +34.76% / REL20 +47.29% 🔥 再度爆發</span></div>
+    <div class="sc-item"><span class="sc-tk">光通訊 ALAB/NOK/TSEM/AAOI</span><span class="sc-rk">Rank 87–91｜REL5 ALAB +32.86%</span></div>
+    <div class="sc-item"><span class="sc-tk">記憶體 SIMO/MU/STX/WDC</span><span class="sc-rk">Rank 82–94｜REL20 +20~+81%</span></div>
+    <div class="sc-item"><span class="sc-tk">半導體 AMD/QCOM</span><span class="sc-rk">Rank 88/79｜REL20 +43%/+52%｜廣度擴散</span></div>
+    
+  </div>
+
+  <div class="sc w">
+    <div class="sc-hdr" onclick="tog('us-w')"><span>◎ 第二梯隊：今日爆發，觀察延續性</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">再生能源 ENPH/SEDG</span><span class="sc-rk">+17.29%/+12.06%｜REL5 +48%/+47% 🔥 今日集體引爆</span></div>
+    <div class="sc-item"><span class="sc-tk">軟體 APLD/NBIS</span><span class="sc-rk">+21.51%/+14.65%｜Rank 81/87｜AI 基礎設施再加速</span></div>
+    <div class="sc-item"><span class="sc-tk">IBM</span><span class="sc-rk">+12.48%｜REL5 +17.8% vs REL20 −4% ⚡翻轉信號</span></div>
+    <div class="sc-item"><span class="sc-tk">量子 RGTI/QUBT</span><span class="sc-rk">+30.57%/+19.35%｜純題材投機，高波動</span></div>
+    <div class="sc-item"><span class="sc-tk">半導體 WOLF</span><span class="sc-rk">Rank 99｜+18.62%｜REL20 +146% ⚠ 極度過熱</span></div>
+    
+  </div>
+
+  <div class="sc tw">
+    <div class="sc-hdr" onclick="tog('us-tw')"><span>△ 轉弱：短線動能惡化</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">散熱 VRT</span><span class="sc-rk">Rank 53｜REL5 −12.65% ⚠ 動能持續惡化</span></div>
+    <div class="sc-item"><span class="sc-tk">SaaS NOW/CRM/PLTR</span><span class="sc-rk">Rank 15/14/17｜REL20 −7%/−11%/−14% 全線走弱</span></div>
+    <div class="sc-item"><span class="sc-tk">REIT EQIX/DLR</span><span class="sc-rk">Rank 33/28｜REL20 −6%/−7%</span></div>
+    <div class="sc-item"><span class="sc-tk">重電 ETN</span><span class="sc-rk">Rank 20｜REL5 −6.30% / REL20 −12.25%</span></div>
+    
+  </div>
+
+  <div class="sc x">
+    <div class="sc-hdr" onclick="tog('us-x')"><span>▼ 弱勢：持續流出，出清區</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">防禦航太 AVAV/KTOS</span><span class="sc-rk">Rank 1/4｜REL20 −26.81%/−24.75% 🔴 全表最弱</span></div>
+    <div class="sc-item"><span class="sc-tk">核能/鈾礦 CCJ/OKLO/CEG</span><span class="sc-rk">Rank 13/12/19｜REL20 −21%/−14%/−4% 全板塊失血</span></div>
+    <div class="sc-item"><span class="sc-tk">加密代理 HOOD/COIN/IBIT</span><span class="sc-rk">Rank 10/23/29｜REL20 全數負值</span></div>
+    <div class="sc-item"><span class="sc-tk">防禦航太 NOC/LMT/RTX/GE</span><span class="sc-rk">Rank 14/19/19/33｜REL20 均負值</span></div>
+    
+  </div>
+
+
+<div class="sc-det" id="us-s">
+      <table class="det-tbl">
+        <thead><tr><th>Ticker</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>動能結構</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">ARM</td><td class="r cg">+16.16%</td><td class="r cg">91</td><td class="r cg">+34.76%</td><td class="r cg">+47.29%</td><td class="cd">REL5 強勢逼近 REL20，IP 授權板塊進入主升段擴張 ⚡</td></tr>
+          <tr><td class="cw">CRWD</td><td class="r cg">−0.29%</td><td class="r cg">77</td><td class="r cg">+15.17%</td><td class="r cg">+34.47%</td><td class="cd">REL5 維持高檔，AI 資安展現極佳防禦屬性</td></tr>
+          <tr><td class="cw">PANW</td><td class="r cg">+2.54%</td><td class="r cg">77</td><td class="r cg">+10.98%</td><td class="r cg">+35.15%</td><td class="cd">雙向穩健正值，多頭趨勢不變</td></tr>
+          <tr><td class="cw">FTNT</td><td class="r cr">−0.42%</td><td class="r cg">81</td><td class="r cg">+9.95%</td><td class="r cg">+44.22%</td><td class="cd">長線 REL20 極強，短線回檔醞釀下一波推升</td></tr>
+          <tr><td class="cw">ALAB</td><td class="r cg">+3.60%</td><td class="r cg">91</td><td class="r cg">+32.86%</td><td class="r cg">+49.05%</td><td class="cd">CPO 龍頭結構完整，REL5 與 REL20 雙動能共振</td></tr>
+          <tr><td class="cw">SIMO</td><td class="r cg">+2.13%</td><td class="r cg">94</td><td class="r cr">−2.41%</td><td class="r cg">+81.21%</td><td class="cd">REL20 全表奪冠，乖離率偏高出現短線修正，無礙長多</td></tr>
+          <tr><td class="cw">MU</td><td class="r cg">+4.11%</td><td class="r cg">92</td><td class="r cr">−5.22%</td><td class="r cg">+51.90%</td><td class="cd">短線微幅拉回洗盤，中長線依舊強勢</td></tr>
+          <tr><td class="cw">STX</td><td class="r cg">+7.91%</td><td class="r cg">89</td><td class="r cr">−0.90%</td><td class="r cg">+35.33%</td><td class="cd">單日暴力大漲修復 REL5 負值，中線結構重回強勢</td></tr>
+          <tr><td class="cw">NOK</td><td class="r cg">+4.11%</td><td class="r cg">87</td><td class="r cr">−3.66%</td><td class="r cg">+39.38%</td><td class="cd">光通訊設備基期墊高，短線稍滯待放量</td></tr>
+          <tr><td class="cw">TSEM</td><td class="r cg">+5.49%</td><td class="r cg">86</td><td class="r cg">+2.99%</td><td class="r cg">+30.95%</td><td class="cd">REL5 翻正，中線持續墊高底盤</td></tr>
+          <tr><td class="cw">AMD</td><td class="r cg">+0.45%</td><td class="r cg">88</td><td class="r cg">+0.86%</td><td class="r cg">+43.72%</td><td class="cd">資金廣度擴散受益者，雙向動能均正</td></tr>
+          <tr><td class="cw">QCOM</td><td class="r cg">+5.38%</td><td class="r cg">79</td><td class="r cg">+0.06%</td><td class="r cg">+52.41%</td><td class="cd">REL20 強勢，邊緣 AI 題材資金持續進駐</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">⚡ Gemini 洞察：本梯隊展現極強的「成長與防禦雙軸」特徵。ARM 的 REL5 (+34.76%) 急速逼近 REL20，表明市場對 AI 晶片設計版稅的重估（Re-rating）已進入主升段加速期。與此同時，AI 資安三巨頭（CRWD/PANW/FTNT）無懼大盤波動，雙向動能穩健，是長線核心底倉的絕佳配置。記憶體板塊（SIMO/MU）雖有極高的 REL20，但需留意短線高基期導致的乖離率收斂。</div>
+    </div>
+<div class="sc-det" id="us-w">
+      <table class="det-tbl">
+        <thead><tr><th>Ticker</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">ENPH</td><td class="r cg">+17.29%</td><td class="r cg">79</td><td class="r cg">+48.37%</td><td class="r cg">+71.87%</td><td class="cd">再生能源爆發式跳空，REL5 急速拉升，需未來兩日確認非短軋空</td></tr>
+          <tr><td class="cw">SEDG</td><td class="r cg">+12.06%</td><td class="r cg">80</td><td class="r cg">+47.24%</td><td class="r cg">+43.46%</td><td class="cd">REL5 強勢黃金交叉 REL20，實質新動能啟動 ⚡</td></tr>
+          <tr><td class="cw">APLD</td><td class="r cg">+21.51%</td><td class="r cg">81</td><td class="r cg">+5.53%</td><td class="r cg">+43.64%</td><td class="cd">算力基建迎來報復性加速，中長線保護短線</td></tr>
+          <tr><td class="cw">NBIS</td><td class="r cg">+14.65%</td><td class="r cg">87</td><td class="r cg">+6.05%</td><td class="r cg">+36.42%</td><td class="cd">雲端基建動能加溫，與 APLD 形成板塊共振</td></tr>
+          <tr><td class="cw">IBM</td><td class="r cg">+12.48%</td><td class="r cr">27</td><td class="r cg">+17.80%</td><td class="r cr">−3.99%</td><td class="cd">老牌大象跳舞！REL5 暴力突破負值的 REL20，潛在翻轉黑馬</td></tr>
+          <tr><td class="cw">BE</td><td class="r cg">+9.06%</td><td class="r cg">84</td><td class="r cg">+6.20%</td><td class="r cg">+29.58%</td><td class="cd">跟風再生能源大漲，中線結構原本就不差</td></tr>
+          <tr><td class="cw">RGTI</td><td class="r cg">+30.57%</td><td class="r cy">60</td><td class="r cg">+19.60%</td><td class="r cg">+15.48%</td><td class="cd">量子計算純粹資金博弈，缺乏基本面支撐，勿盲目追價</td></tr>
+          <tr><td class="cw">QUBT</td><td class="r cg">+19.35%</td><td class="r cy">59</td><td class="r cg">+3.39%</td><td class="r cg">+11.29%</td><td class="cd">量子投機板塊同步跟風，極限高波動</td></tr>
+          <tr><td class="cw">WOLF</td><td class="r cg">+18.62%</td><td class="r cg">99</td><td class="r cg">+10.97%</td><td class="r cg">+146.02%</td><td class="cd">REL20 達 +146% 的病態極端值，隨時可能迎來毀滅性均值回歸 ⚠</td></tr>
+          <tr><td class="cw">LRCX</td><td class="r cg">+3.47%</td><td class="r cy">61</td><td class="r cg">+2.25%</td><td class="r cg">+9.39%</td><td class="cd">設備股溫和墊高，不溫不火</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">⚠ Gemini 示警與機會：板塊兩極化嚴重。WOLF (REL20 +146%) 籌碼已處於絕對危險區，嚴格禁止追價；量子計算 (RGTI/QUBT) 屬流動性溢出的純題材炒作。真正的觀察點在於再生能源 (SEDG) 展現了 REL5 越過 REL20 的黃金交叉，以及 IBM 從低 Rank 深淵中拔地而起 (REL5 +17.8%)，這類「實質翻轉」訊號值得優先納入未來 48 小時的監控名單。</div>
+    </div>
+<div class="sc-det" id="us-tw">
+      <table class="det-tbl">
+        <thead><tr><th>Ticker</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">VRT</td><td class="r cg">+2.42%</td><td class="r cy">53</td><td class="r cr">−12.65%</td><td class="r cg">+1.55%</td><td class="cd">反彈無力修復破敗的 REL5，散熱硬體敘事面臨嚴峻挑戰 ⚠</td></tr>
+          <tr><td class="cw">NOW</td><td class="r cr">−3.49%</td><td class="r cr">15</td><td class="r cg">+14.47%</td><td class="r cr">−7.71%</td><td class="cd">單日下殺直接吞噬短期優勢，SaaS 結構依然脆弱</td></tr>
+          <tr><td class="cw">CRM</td><td class="r cr">−2.10%</td><td class="r cr">14</td><td class="r cg">+6.26%</td><td class="r cr">−11.54%</td><td class="cd">中長線空頭排列，短期微幅反彈無濟於事</td></tr>
+          <tr><td class="cw">PLTR</td><td class="r cg">+0.19%</td><td class="r cr">17</td><td class="r cg">+5.61%</td><td class="r cr">−14.39%</td><td class="cd">動能顯著衰退，AI 軟體應用變現疑慮發酵</td></tr>
+          <tr><td class="cw">EQIX</td><td class="r cg">+1.25%</td><td class="r cr">33</td><td class="r cg">+0.05%</td><td class="r cr">−6.60%</td><td class="cd">高利率環境持續壓制資料中心 REITs 估值</td></tr>
+          <tr><td class="cw">DLR</td><td class="r cg">+1.90%</td><td class="r cr">28</td><td class="r cg">+0.44%</td><td class="r cr">−7.71%</td><td class="cd">與 EQIX 命運共同體，板塊整體承壓</td></tr>
+          <tr><td class="cw">ETN</td><td class="r cg">+0.47%</td><td class="r cr">20</td><td class="r cr">−6.30%</td><td class="r cr">−12.25%</td><td class="cd">重電巨頭雙向動能均沒頂，基礎設施擴建題材退燒</td></tr>
+          <tr><td class="cw">SMCI</td><td class="r cd">0.00%</td><td class="r cy">46</td><td class="r cg">+4.51%</td><td class="r cg">+10.24%</td><td class="cd">散熱板塊內部分化，SMCI 勉強維持正值撐盤</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">⚠ 散熱敘事與舊 AI 基建的陣痛期：VRT 的 REL5 (−12.65%) 是本區最大隱憂，若傳統散熱或液冷過渡期面臨利潤壓縮，將打破伺服器硬體無腦多頭的邏輯。同時，SaaS 族群（NOW/CRM）雖有零星抵抗，但中長線空頭排列（REL20 皆負）尚未扭轉，資金明顯避開變現能力尚待證實的軟體層。</div>
+    </div>
+<div class="sc-det" id="us-x">
+      <table class="det-tbl">
+        <thead><tr><th>Ticker</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">AVAV</td><td class="r cr">−0.48%</td><td class="r cr">1</td><td class="r cg">+1.25%</td><td class="r cr">−26.81%</td><td class="cd">Rank 墊底，防禦無人機遭逢結構性資金棄守</td></tr>
+          <tr><td class="cw">KTOS</td><td class="r cr">−2.06%</td><td class="r cr">4</td><td class="r cg">+4.10%</td><td class="r cr">−24.75%</td><td class="cd">跌勢未止，防禦板塊趨勢確認崩壞</td></tr>
+          <tr><td class="cw">CCJ</td><td class="r cg">+1.26%</td><td class="r cr">13</td><td class="r cr">−8.77%</td><td class="r cr">−21.15%</td><td class="cd">鈾礦領跌，核能板塊成為提款機</td></tr>
+          <tr><td class="cw">OKLO</td><td class="r cg">+3.97%</td><td class="r cr">12</td><td class="r cr">−6.62%</td><td class="r cr">−14.54%</td><td class="cd">SMR 小型核能死貓反彈，無力改變雙向深負的現實</td></tr>
+          <tr><td class="cw">CEG</td><td class="r cg">+1.62%</td><td class="r cr">19</td><td class="r cg">+3.92%</td><td class="r cr">−4.89%</td><td class="cd">核能巨頭亦無法倖免，非趨勢性反彈</td></tr>
+          <tr><td class="cw">HOOD</td><td class="r cg">+0.21%</td><td class="r cr">10</td><td class="r cr">−1.14%</td><td class="r cr">−18.58%</td><td class="cd">加密貨幣代理商慘遭雙殺，買盤枯竭</td></tr>
+          <tr><td class="cw">COIN</td><td class="r cg">+1.19%</td><td class="r cr">23</td><td class="r cr">−4.14%</td><td class="r cr">−10.58%</td><td class="cd">交易所動能雙雙沉入水下，隨幣圈降溫</td></tr>
+          <tr><td class="cw">NOC</td><td class="r cr">−0.11%</td><td class="r cr">14</td><td class="r cr">−0.10%</td><td class="r cr">−10.88%</td><td class="cd">大型國防承包商遭機構剔除核心名單</td></tr>
+          <tr><td class="cw">LMT</td><td class="r cg">+0.04%</td><td class="r cr">19</td><td class="r cg">+0.49%</td><td class="r cr">−10.31%</td><td class="cd">中線深負，資金徹底遠離舊防禦資產</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">🔴 資金避險撤出確認：本區塊清晰展示了市場風險偏好的劇烈轉變。核能（CCJ/OKLO/CEG）與防禦航太（AVAV/KTOS）遭遇無差別拋售。此現象表明，資金正無情地從「舊基建與傳統防禦」中抽離，將流動性輸血至 AI 矽智財與綠色能源的新戰場。對於此區標的，反彈皆是逃命波。</div>
+    </div>
+</div>
+
+<div class="rotation-verdict">
+  <div class="rv-title">⚡ Gemini 量化視角：矽智財定價升級 vs 舊基建資金大撤退</div>
+  <div class="rv-txt">
+    <strong>今日美股資金輪廓極度鮮明：市場正在為「AI 的大腦（IP 授權）」與「驅動 AI 的新能源」進行重新定價，同時拋棄重裝備與舊防禦。</strong>ARM 的 +16.16% 飆漲不僅是單一個股表現，其 REL5（+34.76%）與 REL20（+47.29%）的高速貼合，印證了 AI 晶片架構版稅的長線乘數效應正被機構認可。而 ENPH 與 SEDG 領軍的再生能源板塊暴力拉升，SEDG 更出現「REL5 黃金交叉 REL20」的標準啟動型態，為沉寂已久的綠能帶來曙光。<br><br>
+    <strong>資金配置的最優解，在於把握「防禦型成長（Defensive Growth）」。</strong>AI 資安三巨頭（CRWD/PANW/FTNT）展現了最完美的複利斜率，沒有暴漲過熱的籌碼凌亂，只有穩健雙向正值的底氣；相對的，WOLF（REL20 +146%）與 RGTI（量子投機）則是不折不扣的流動性陷阱。<br><br>
+    <strong>壯士斷腕的時刻：核能與防禦航太。</strong>CCJ、AVAV、KTOS 等標的全面跌破趨勢線，雙向動能極度惡化。市場用真金白銀告訴我們：在算力迭代的狂潮下，傳統核分裂與無人機軍工題材已經失去了資金的青睞。
+    <div class="rv-sub">Gemini 動能矩陣解析</div>
+    <div class="rv-row"><span class="lbl">🟢 核心主升段（抱緊）</span><span class="val">ARM、ALAB、CRWD / PANW / FTNT、SIMO / MU / STX</span></div>
+    <div class="rv-row"><span class="lbl">⚡ 動能黃金交叉（新曙光）</span><span class="val">SEDG（REL5 +47% > REL20 +43%）、IBM（REL5 轉強跳空）</span></div>
+    <div class="rv-row"><span class="lbl">🟡 盲盒區（待未來 2 日確認）</span><span class="val">ENPH（Rank 偏低但單日暴漲）、APLD / NBIS（算力基建跟風）</span></div>
+    <div class="rv-row"><span class="lbl">🟠 死亡禁區（嚴禁追高）</span><span class="val">WOLF（極端乖離）、RGTI / QUBT（純概念炒作）</span></div>
+    <div class="rv-row"><span class="lbl">🔴 資金絞肉機（立刻出清）</span><span class="val">核能三雄、國防軍工（AVAV/KTOS）、加密代理、傳統重電（ETN）</span></div>
+  </div>
+</div>
+
+
+<!-- ═══ 台股 ═══ -->
+<div class="sec-lbl" style="margin-bottom:10px;margin-top:6px;">台股 AI 供應鏈輪動｜基準：0050（5/21 截面）</div>
+
+<div class="sec4">
+
+  <div class="sc s">
+    <div class="sc-hdr" onclick="tog('tw-s')"><span>▲ 強勢：動能確立</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">2454 聯發科</span><span class="sc-rk">Rank 95｜+3.80%｜REL20 +49.33% 🔥</span></div>
+    <div class="sc-item"><span class="sc-tk">4919 新唐</span><span class="sc-rk">Rank 95｜+5.23%｜REL5 +14.48% 半導體強勢</span></div>
+    <div class="sc-item"><span class="sc-tk">3443 創意</span><span class="sc-rk">Rank 94｜+2.37%｜ASIC 設計 REL20 +29.86%</span></div>
+    <div class="sc-item"><span class="sc-tk">6451 訊芯-KY</span><span class="sc-rk">Rank 83｜+4.61%｜REL5 +8.63% 光通訊持續</span></div>
+    <div class="sc-item"><span class="sc-tk">2308 台達電</span><span class="sc-rk">Rank 75｜+3.69%｜REL20 −6.77% 中線待改善</span></div>
+    
+  </div>
+
+  <div class="sc w">
+    <div class="sc-hdr" onclick="tog('tw-w')"><span>◎ 觀察：REL5 轉正，中線待確認</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">6271 同欣電</span><span class="sc-rk">Rank 80｜+9.95%｜REL5 +23.87% 今日最亮眼 ⚡</span></div>
+    <div class="sc-item"><span class="sc-tk">2408 南亞科</span><span class="sc-rk">Rank 78｜+2.22%｜REL20 +25.52% 記憶體持續</span></div>
+    <div class="sc-item"><span class="sc-tk">3661 世芯-KY</span><span class="sc-rk">Rank 77｜+0.20%｜REL5 +2.25% / REL20 +9.68%</span></div>
+    <div class="sc-item"><span class="sc-tk">6669 緯穎</span><span class="sc-rk">Rank 79｜+1.78%｜REL5 −3% / REL20 +13.82%</span></div>
+    <div class="sc-item"><span class="sc-tk">8996 高力</span><span class="sc-rk">Rank 46｜+7.51%｜REL5 +11.13% 跟漲再生能源</span></div>
+    
+  </div>
+
+  <div class="sc tw">
+    <div class="sc-hdr" onclick="tog('tw-tw')"><span>△ 轉弱：REL20 持續走弱</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">2059 川湖</span><span class="sc-rk">Rank 77｜−3.98%｜REL5 −11.05% 今日逆勢下跌 ⚠</span></div>
+    <div class="sc-item"><span class="sc-tk">3231 緯創</span><span class="sc-rk">Rank 29｜+0.71%｜REL20 −13.32% 代工持續落後</span></div>
+    <div class="sc-item"><span class="sc-tk">4977 眾達-KY</span><span class="sc-rk">Rank 40｜+4.89%｜REL5 −12.49% / REL20 −22.60% ⚠</span></div>
+    <div class="sc-item"><span class="sc-tk">6869 雲豹能源</span><span class="sc-rk">Rank 6｜−0.74%｜REL20 −19.50% 再生能源最弱</span></div>
+    
+  </div>
+
+  <div class="sc x">
+    <div class="sc-hdr" onclick="tog('tw-x')"><span>▼ 弱勢：雙向崩跌，出清區</span><span class="bl">▼</span></div>
+    <div class="sc-item"><span class="sc-tk">1519 華城</span><span class="sc-rk">Rank 13｜REL5 −10.86% / REL20 −23.47% 🔴</span></div>
+    <div class="sc-item"><span class="sc-tk">1503 士電</span><span class="sc-rk">Rank 24｜REL5 −6.53% / REL20 −15.28%</span></div>
+    <div class="sc-item"><span class="sc-tk">1513 中興電</span><span class="sc-rk">Rank 28｜REL20 −12.20%</span></div>
+    <div class="sc-item"><span class="sc-tk">2634 漢翔</span><span class="sc-rk">Rank 9｜REL5 −1.54% / REL20 −18.53%｜防禦航太</span></div>
+    
+  </div>
+
+
+<div class="sc-det" id="tw-s">
+      <table class="det-tbl">
+        <thead><tr><th>代碼</th><th>名稱</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>動能結構</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">2454</td><td class="cd">聯發科</td><td class="r cg">+3.80%</td><td class="r cg">95</td><td class="r cg">+4.86%</td><td class="r cg">+49.33%</td><td class="cd">巨獸狂舞！REL20 極強，完美映射美股半導體廣度擴散</td></tr>
+          <tr><td class="cw">4919</td><td class="cd">新唐</td><td class="r cg">+5.23%</td><td class="r cg">95</td><td class="r cg">+14.48%</td><td class="r cg">+12.79%</td><td class="cd">REL5 猛烈黃金交叉，邊緣 AI 與 MCU 庫存去化迎來實質轉機 ⚡</td></tr>
+          <tr><td class="cw">3443</td><td class="cd">創意</td><td class="r cg">+2.37%</td><td class="r cg">94</td><td class="r cr">−3.30%</td><td class="r cg">+29.86%</td><td class="cd">ASIC 龍頭底蘊深厚，短線洗盤無損 REL20 雄風</td></tr>
+          <tr><td class="cw">6451</td><td class="cd">訊芯-KY</td><td class="r cg">+4.61%</td><td class="r cg">83</td><td class="r cg">+8.63%</td><td class="r cr">−5.99%</td><td class="cd">精準銜接美股 ALAB 光通訊行情，REL5 連續發力</td></tr>
+          <tr><td class="cw">2308</td><td class="cd">台達電</td><td class="r cg">+3.69%</td><td class="r cg">75</td><td class="r cr">−3.35%</td><td class="r cr">−6.77%</td><td class="cd">巨型權值股動能稍滯，中長線仍受制於水下壓力</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">⚡ Gemini 洞察：台股盤面形成完美的「雙引擎結構」。聯發科（REL20 +49.33%）作為長線定海神針，確立了 IC 設計的吸金主導權；而新唐（REL5 +14.48% > REL20 +12.79%）更是展現了台股半導體板塊內少見的強勢破局。這證明資金並非盲目拉抬指數，而是有節奏地往具備補漲與基本面拐點的次族群（MCU/邊緣運算）滲透。</div>
+    </div>
+<div class="sc-det" id="tw-w">
+      <table class="det-tbl">
+        <thead><tr><th>代碼</th><th>名稱</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">6271</td><td class="cd">同欣電</td><td class="r cg">+9.95%</td><td class="r cg">80</td><td class="r cg">+23.87%</td><td class="r cg">+11.20%</td><td class="cd">傲視全場的 Alpha 爆發！REL5 巨幅甩開 REL20，低軌衛星題材炸裂 ⚡</td></tr>
+          <tr><td class="cw">2408</td><td class="cd">南亞科</td><td class="r cg">+2.22%</td><td class="r cg">78</td><td class="r cr">−7.27%</td><td class="r cg">+25.52%</td><td class="cd">美股記憶體強勢的台股映射，中線持盈保泰</td></tr>
+          <tr><td class="cw">3661</td><td class="cd">世芯-KY</td><td class="r cg">+0.20%</td><td class="r cg">77</td><td class="r cg">+2.25%</td><td class="r cg">+9.68%</td><td class="cd">高價 IP 股進入冷靜期，量縮盤整等待下次東風</td></tr>
+          <tr><td class="cw">6669</td><td class="cd">緯穎</td><td class="r cg">+1.78%</td><td class="r cg">79</td><td class="r cr">−3.08%</td><td class="r cg">+13.82%</td><td class="cd">受制於機櫃/伺服器雜音，短線走勢趨於黏滯</td></tr>
+          <tr><td class="cw">8996</td><td class="cd">高力</td><td class="r cg">+7.51%</td><td class="r cy">46</td><td class="r cg">+11.13%</td><td class="r cr">−15.42%</td><td class="cd">純粹受美股綠能刺激的短線投機，長線仍是深淵，見好就收</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">🚀 尋找台股 Alpha：今日最震撼的莫過於同欣電亮燈漲停。其 REL5 (+23.87%) 遠高於 REL20 (+11.20%)，這不是大盤賦予的 Beta，而是衛星通訊與利基型封裝累積已久的獨立 Alpha 能量釋放。相較之下，高力的拉抬僅是跟風美股板塊的短打，長線結構的敗壞並未逆轉，需嚴格區分兩者的含金量。</div>
+    </div>
+<div class="sc-det" id="tw-tw">
+      <table class="det-tbl">
+        <thead><tr><th>代碼</th><th>名稱</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">2059</td><td class="cd">川湖</td><td class="r cr">−3.98%</td><td class="r cg">77</td><td class="r cr">−11.05%</td><td class="r cg">+8.21%</td><td class="cd">全場最大警訊！逆勢重挫導致 REL5 惡化，AI 伺服器滑軌霸主鬆動 ⚠</td></tr>
+          <tr><td class="cw">3231</td><td class="cd">緯創</td><td class="r cg">+0.71%</td><td class="r cr">29</td><td class="r cr">−0.22%</td><td class="r cr">−13.32%</td><td class="cd">AI 代工老將深陷泥淖，雙向動能持續破底</td></tr>
+          <tr><td class="cw">4977</td><td class="cd">眾達-KY</td><td class="r cg">+4.89%</td><td class="r cy">40</td><td class="r cr">−12.49%</td><td class="r cr">−22.60%</td><td class="cd">同業吃肉它喝湯，掩蓋不住雙向深負的內部結構性利空 ⚠</td></tr>
+          <tr><td class="cw">6869</td><td class="cd">雲豹能源</td><td class="r cr">−0.74%</td><td class="r cr">6</td><td class="r cr">−8.00%</td><td class="r cr">−19.50%</td><td class="cd">連美股綠能暴漲都救不起，台股再生能源淪為提款機</td></tr>
+          <tr><td class="cw">8033</td><td class="cd">雷虎</td><td class="r cg">+1.88%</td><td class="r cr">11</td><td class="r cr">−1.85%</td><td class="r cr">−20.75%</td><td class="cd">無人機神話破滅，資金無情拋棄</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">⚠ 機櫃與光通訊的地雷區：川湖的重挫（-3.98%）是本區核心警鐘，完美呼應了美股 VRT 的轉弱，暗示伺服器硬體端可能正面臨毛利下修或技術轉換的陣痛。更危險的是眾達-KY，在訊芯-KY 強勢表態下，其 REL20 卻深陷 -22.60%，這絕對是財報面或營運面的「未爆彈」特徵，不可輕易逢低承接。</div>
+    </div>
+<div class="sc-det" id="tw-x">
+      <table class="det-tbl">
+        <thead><tr><th>代碼</th><th>名稱</th><th class="r">1D%</th><th class="r">Rank</th><th class="r">REL5</th><th class="r">REL20</th><th>判讀</th></tr></thead>
+        <tbody>
+          <tr><td class="cw">1519</td><td class="cd">華城</td><td class="r cg">+0.38%</td><td class="r cr">13</td><td class="r cr">−10.86%</td><td class="r cr">−23.47%</td><td class="cd">重電大哥倒下，微幅收紅只是誘多，雙向動能崩盤</td></tr>
+          <tr><td class="cw">1503</td><td class="cd">士電</td><td class="r cg">+0.53%</td><td class="r cr">24</td><td class="r cr">−6.53%</td><td class="r cr">−15.28%</td><td class="cd">難兄難弟，中長線趨勢完全被空頭掌控</td></tr>
+          <tr><td class="cw">1513</td><td class="cd">中興電</td><td class="r cr">−0.32%</td><td class="r cr">28</td><td class="r cr">−1.54%</td><td class="r cr">−12.20%</td><td class="cd">止跌遙遙無期，資金連反彈都懶得做</td></tr>
+          <tr><td class="cw">2634</td><td class="cd">漢翔</td><td class="r cg">+0.11%</td><td class="r cr">9</td><td class="r cr">−1.54%</td><td class="r cr">−18.53%</td><td class="cd">美股 AVAV/KTOS 崩盤的最佳鏡像，軍工航太進入冰河期</td></tr>
+        </tbody>
+      </table>
+      <div class="det-note">🔴 舊主流的全面消退：重電三雄（華城/士電/中興電）的反彈極度虛弱，這並非單一市場現象，而是與美股 ETN 形成跨市場的「看空共識」，證明全球基礎電網建設的本益比擴張期已過。軍工航太（漢翔）同樣無情受制於美股同業的資金撤離，對於這些板塊，保留現金是唯一選項。</div>
+    </div>
+</div>
+
+<div class="rotation-verdict">
+  <div class="rv-title">⚡ Gemini 量化視角：尋找極致 Alpha｜半導體雙核心 vs 舊時代眼淚</div>
+  <div class="rv-txt">
+    <strong>台股今日的含金量極高，資金展現了極其聰明的「點穴式」打法。</strong>同欣電（+9.95%）的 REL5 狂飆，是標準的「暗盤籌碼吸納完畢、借勢引爆」的 Alpha 展現，完全脫離了對應美股板塊的束縛。同時，聯發科與新唐構築的「大中型 IC 設計雙核心」，更是精準踩在美股邊緣運算（QCOM/AMD）資金擴散的節拍上。<br><br>
+    <strong>魔鬼藏在細節裡，伺服器硬體的隱憂正在浮現。</strong>川湖（-3.98%）的逆勢下跌絕非偶然，配合美股散熱巨頭 VRT 的走弱，我們必須將「AI 機櫃、滑軌、代工（緯穎/緯創）」的評級全面下調至中性偏空觀察區。歷史經驗表明，硬體製造端的利潤率永遠是第一個被壓縮的。<br><br>
+    <strong>放棄幻想，認清跨市場死刑宣判。</strong>重電三雄與軍工航太的技術性微幅反彈，掩蓋不了 REL5/REL20 雙雙血崩的量化事實。美股 ETN 與 AVAV 的崩跌已經給出了答案，台股舊主流的資金撤退才剛進入深水區。
+    <div class="rv-sub">台股資金流向雷達</div>
+    <div class="rv-row"><span class="lbl">🟢 獨立爆發 (Alpha)</span><span class="val">同欣電（REL5 +23.87% 無視大盤，衛星通訊新焦點）</span></div>
+    <div class="rv-row"><span class="lbl">🟢 穩健推升 (Beta+)</span><span class="val">聯發科、新唐（黃金交叉）、創意、訊芯-KY</span></div>
+    <div class="rv-row"><span class="lbl">🔗 美台共振效應</span><span class="val">正向：半導體擴散 (AMD ↔ 聯發科)｜負向：防禦崩盤 (AVAV ↔ 漢翔)</span></div>
+    <div class="rv-row"><span class="lbl">⚠ 資金裂痕警示</span><span class="val">川湖（逆勢重挫，機櫃板塊拉警報）</span></div>
+    <div class="rv-row"><span class="lbl">🔴 跨市場無差別拋售</span><span class="val">重電三雄 ↔ ETN 走弱｜雲豹能源（無法跟隨美股綠能，本質虛弱）</span></div>
+    <br>
+    ⚠ <strong>Gemini 嚴厲避險名單：</strong>眾達-KY (REL20 -22.60%)。在光通訊同業大口吃肉時獨自崩跌，這是典型的資訊不對稱現象，通常預示著即將到來的實體利空，應立即將其剔除出觀察池。
+  </div>
+</div>
+
+
+<!-- ═══ 跨市場 ═══ -->
+<div class="sec-lbl" style="margin-bottom:10px;margin-top:6px;">美台跨市場映射與乖離分析</div>
+<div class="emo-box">
+  <div class="emo-box-title">🔗 強度傳導 / 乖離收斂 / 獨立 Alpha（5/21 截面）</div>
+  <div class="emo-grid">
+    <div class="emo-cell">
+      <div class="emo-cell-lbl">完美跨市場傳導</div>
+      <div class="emo-cell-txt">
+        [強勢] AMD/QCOM 飆升<br>
+        → 聯發科/新唐 完美銜接<br><br>
+        [弱勢] ETN 基礎設施退燒<br>
+        → 華城/士電 深陷泥淖<br><br>
+        [崩盤] AVAV/KTOS 無人機血洗<br>
+        → 漢翔/雷虎 資金棄守
+      </div>
+    </div>
+    <div class="emo-cell">
+      <div class="emo-cell-lbl">強度乖離與折價現象</div>
+      <div class="emo-cell-txt">
+        ARM 暴走 (+16.16%)<br>
+        → 世芯-KY (+0.20%) 呈現嚴重折價，追價意願低迷<br><br>
+        ENPH 飆漲 (+17.29%)<br>
+        → 高力 (+7.51%) 動能減半，雲豹能源甚至收黑，台廠綠能純度受疑<br><br>
+        ALAB 穩健 (+3.60%)<br>
+        → 訊芯-KY (+4.61%) 產生超額 Beta
+      </div>
+    </div>
+    <div class="emo-cell">
+      <div class="emo-cell-lbl">台股獨立突圍 (Alpha)</div>
+      <div class="emo-cell-txt">
+        <strong>同欣電 (+9.95%)</strong><br>
+        → REL5 +23.87% 暴力突破<br>
+        → 脫離美股單一指引，走出自身產業拐點<br><br>
+        <strong>新唐 (REL5 +14.48%)</strong><br>
+        → 動能反轉黃金交叉<br>
+        → 台股 MCU 庫存週期的先行指標<br><br>
+        ✅ 擺脫美股影子，資金自找出口
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="ftr">
+  <div class="disc">本報告為量化動能推演，不構成任何實體投資建議。數據來源：美股 / 台股 AI 供應鏈監控表 5/21 截面。</div>
+  <div class="brand">KL × Gemini｜個股輪動分析 v1.1</div>
+</div>
+
+<script>
+const fsMap={small:'15px',normal:'18px',large:'21px'};
+const themes={
+  dark:{'--bg':'#080b10','--surface':'#0d1118','--surface2':'#121820','--border':'#1c2330','--text':'#b8c8d8','--dim':'#405060','--accent':'#00c8f0','--green':'#00c896','--red':'#ff3d5a','--yellow':'#f0c040','--orange':'#ff8040'},
+  light:{'--bg':'#f2f5f9','--surface':'#ffffff','--surface2':'#e8eef5','--border':'#ccd6e2','--text':'#1a2535','--dim':'#6080a0','--accent':'#0070a0','--green':'#006e4a','--red':'#c00030','--yellow':'#7a5500','--orange':'#a03800'}
+};
+function setFS(s){
+  document.documentElement.style.setProperty('--fs',fsMap[s]);
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('fs-'+s).classList.add('on');
+  const cur=document.body.classList.contains('light')?'light':'dark';
+  document.getElementById('btn-'+cur).classList.add('on');
+}
+function setTheme(t){
+  const r=document.documentElement;
+  Object.entries(themes[t]).forEach(([k,v])=>r.style.setProperty(k,v));
+  document.body.classList.toggle('light',t==='light');
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('btn-'+t).classList.add('on');
+  const fs=r.style.getPropertyValue('--fs')||'18px';
+  const fsKey=Object.entries(fsMap).find(([,v])=>v===fs)?.[0]||'normal';
+  document.getElementById('fs-'+fsKey).classList.add('on');
+}
+function tog(id){
+  const el=document.getElementById(id);
+  const isOpen=el.classList.contains('open');
+  document.querySelectorAll('.sc-det').forEach(d=>d.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+document.getElementById('btn-dark').classList.add('on');
+document.getElementById('fs-normal').classList.add('on');
+document.addEventListener('copy',e=>e.preventDefault());
+document.addEventListener('cut',e=>e.preventDefault());
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['a','c','x','s','u'].includes(e.key.toLowerCase()))e.preventDefault();});
+document.addEventListener('selectstart',e=>e.preventDefault());
+document.addEventListener('dragstart',e=>e.preventDefault());
+</script>
+</body>
+</html>
